@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import jwt
 from functools import wraps
 import datetime
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -18,6 +19,11 @@ load_dotenv()
 client = MongoClient(os.getenv('MONGODB_URI'))
 db = client.vikarshan
 users = db.users
+tasks = db.tasks
+equipment = db.equipment
+market_prices = db.market_prices
+weather_data = db.weather_data
+soil_data = db.soil_data
 
 # Define your CNN model (same as you defined above)
 class CNNClassifier(nn.Module):
@@ -204,6 +210,152 @@ def predict():
                 'confidence': confidence
             })
     return jsonify({'error': 'No file uploaded'})
+
+@app.route('/dashboard')
+@token_required
+def dashboard():
+    return render_template('dashboard.html')
+
+@app.route('/api/weather')
+@token_required
+def get_weather():
+    try:
+        # You can integrate with a real weather API here
+        # For now, returning sample data
+        return jsonify({
+            'temperature': '25°C',
+            'humidity': '65%',
+            'rainfall': '0mm',
+            'forecast': [
+                {'day': 'Today', 'temp': '25°C', 'condition': 'Sunny'},
+                {'day': 'Tomorrow', 'temp': '23°C', 'condition': 'Partly Cloudy'},
+                {'day': 'Day 3', 'temp': '22°C', 'condition': 'Rain'}
+            ]
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/soil')
+@token_required
+def get_soil_data():
+    try:
+        # You can integrate with real soil sensors here
+        # For now, returning sample data
+        return jsonify({
+            'moisture': '45%',
+            'ph': '6.5',
+            'temperature': '22°C',
+            'nutrients': {
+                'nitrogen': 'Good',
+                'phosphorus': 'Medium',
+                'potassium': 'Good'
+            }
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tasks', methods=['GET', 'POST', 'DELETE'])
+@token_required
+def manage_tasks():
+    try:
+        if request.method == 'GET':
+            user_tasks = list(tasks.find({'user_id': session['user_id']}))
+            return jsonify([{
+                'id': str(task['_id']),
+                'title': task['title'],
+                'due_date': task['due_date'],
+                'status': task['status']
+            } for task in user_tasks])
+            
+        elif request.method == 'POST':
+            data = request.get_json()
+            new_task = {
+                'user_id': session['user_id'],
+                'title': data['title'],
+                'due_date': data['due_date'],
+                'status': 'pending',
+                'created_at': datetime.datetime.utcnow()
+            }
+            result = tasks.insert_one(new_task)
+            return jsonify({'id': str(result.inserted_id), 'message': 'Task created successfully'})
+            
+        elif request.method == 'DELETE':
+            task_id = request.args.get('id')
+            tasks.delete_one({'_id': task_id, 'user_id': session['user_id']})
+            return jsonify({'message': 'Task deleted successfully'})
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/equipment')
+@token_required
+def get_equipment():
+    try:
+        equipment_list = list(equipment.find({'user_id': session['user_id']}))
+        return jsonify([{
+            'id': str(equip['_id']),
+            'name': equip['name'],
+            'status': equip['status'],
+            'last_maintenance': equip['last_maintenance']
+        } for equip in equipment_list])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/market-prices')
+@token_required
+def get_market_prices():
+    try:
+        # You can integrate with a real market price API here
+        # For now, returning sample data
+        return jsonify([
+            {'crop': 'Tomatoes', 'price': 2.50, 'unit': 'kg', 'trend': 'up'},
+            {'crop': 'Potatoes', 'price': 1.75, 'unit': 'kg', 'trend': 'stable'},
+            {'crop': 'Bell Peppers', 'price': 3.00, 'unit': 'kg', 'trend': 'down'}
+        ])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/crop-health')
+@token_required
+def get_crop_health():
+    try:
+        return jsonify({
+            'status': 'healthy',
+            'growth_stage': 'vegetative',
+            'next_action': 'fertilization',
+            'alerts': [],
+            'recommendations': [
+                'Consider applying nitrogen-rich fertilizer',
+                'Monitor for pest activity',
+                'Plan irrigation for next week'
+            ]
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/analytics')
+@token_required
+def get_analytics():
+    try:
+        return jsonify({
+            'yield_forecast': {
+                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                'data': [65, 70, 75, 80, 85, 90]
+            },
+            'resource_usage': {
+                'water': 300,
+                'fertilizer': 150,
+                'pesticides': 80,
+                'energy': 200
+            },
+            'efficiency_metrics': {
+                'water_efficiency': 85,
+                'labor_efficiency': 90,
+                'equipment_efficiency': 75
+            }
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

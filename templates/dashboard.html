@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            transition: transform 0.3s ease;
+        }
+        .gradient-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-green-600 to-green-700 text-white fixed w-full z-50 shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="p-2 bg-white rounded-full shadow-lg">
+                        <img src="https://png.pngtree.com/png-clipart/20201208/original/pngtree-solid-color-three-leaf-clover-clip-art-png-image_5546360.jpg" alt="Logo" class="h-8 w-8 rounded-full">
+                    </div>
+                    <span class="text-xl font-semibold">Farm Dashboard</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/" class="hover:text-green-200 transition-colors duration-200">
+                        <i class="fas fa-home mr-2"></i> Home
+                    </a>
+                    <a href="/logout" class="hover:text-green-200 transition-colors duration-200">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 pt-24 pb-8">
+        <!-- Weather Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Weather Information</h2>
+                    <i class="fas fa-cloud text-2xl text-blue-500"></i>
+                </div>
+                <div id="weather-info" class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-temperature-high text-red-500 mr-2"></i> Temperature</span>
+                        <span id="temperature" class="font-semibold">Loading...</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-tint text-blue-500 mr-2"></i> Humidity</span>
+                        <span id="humidity" class="font-semibold">Loading...</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-cloud-rain text-gray-500 mr-2"></i> Rainfall</span>
+                        <span id="rainfall" class="font-semibold">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Soil Health</h2>
+                    <i class="fas fa-seedling text-2xl text-green-500"></i>
+                </div>
+                <div id="soil-info" class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-water text-blue-500 mr-2"></i> Moisture</span>
+                        <span id="soil-moisture" class="font-semibold">Loading...</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-flask text-purple-500 mr-2"></i> pH Level</span>
+                        <span id="soil-ph" class="font-semibold">Loading...</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-thermometer-half text-red-500 mr-2"></i> Temperature</span>
+                        <span id="soil-temp" class="font-semibold">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Crop Health</h2>
+                    <i class="fas fa-leaf text-2xl text-green-500"></i>
+                </div>
+                <div id="crop-health" class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Status</span>
+                        <span id="crop-status" class="font-semibold text-green-500">Healthy</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-chart-line text-blue-500 mr-2"></i> Growth Stage</span>
+                        <span id="growth-stage" class="font-semibold">Vegetative</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                        <span class="flex items-center"><i class="fas fa-tasks text-orange-500 mr-2"></i> Next Action</span>
+                        <span id="next-action" class="font-semibold">Fertilization</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Analytics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Yield Forecast</h2>
+                    <i class="fas fa-chart-line text-2xl text-blue-500"></i>
+                </div>
+                <canvas id="yieldChart" class="w-full h-64"></canvas>
+            </div>
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Resource Usage</h2>
+                    <i class="fas fa-chart-bar text-2xl text-purple-500"></i>
+                </div>
+                <canvas id="resourceChart" class="w-full h-64"></canvas>
+            </div>
+        </div>
+
+        <!-- Task Management -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Upcoming Tasks</h2>
+                    <i class="fas fa-tasks text-2xl text-orange-500"></i>
+                </div>
+                <div id="task-list" class="space-y-4 mb-4">
+                    <!-- Tasks will be dynamically added here -->
+                </div>
+                <button onclick="addTask()" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center">
+                    <i class="fas fa-plus mr-2"></i> Add Task
+                </button>
+            </div>
+
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Equipment Status</h2>
+                    <i class="fas fa-tools text-2xl text-gray-600"></i>
+                </div>
+                <div id="equipment-list" class="space-y-4">
+                    <!-- Equipment status will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="gradient-card rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Market Prices</h2>
+                    <i class="fas fa-dollar-sign text-2xl text-green-500"></i>
+                </div>
+                <div id="market-prices" class="space-y-4">
+                    <!-- Market prices will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts with improved styling
+        const yieldCtx = document.getElementById('yieldChart').getContext('2d');
+        const resourceCtx = document.getElementById('resourceChart').getContext('2d');
+
+        // Yield Forecast Chart with realistic data
+        new Chart(yieldCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Expected Yield',
+                    data: [85, 72, 78, 75, 82, 80],
+                    borderColor: 'rgb(34, 197, 94)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: 'rgb(34, 197, 94)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 60,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Resource Usage Chart with improved styling
+        new Chart(resourceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Water', 'Fertilizer', 'Pesticides', 'Energy'],
+                datasets: [{
+                    label: 'Current Usage',
+                    data: [75, 60, 45, 80],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(99, 102, 241, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgb(59, 130, 246)',
+                        'rgb(16, 185, 129)',
+                        'rgb(245, 158, 11)',
+                        'rgb(99, 102, 241)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to add a new task with improved styling
+        function addTask() {
+            const taskList = document.getElementById('task-list');
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200';
+            taskDiv.innerHTML = `
+                <span class="flex items-center">
+                    <i class="fas fa-clipboard-list text-gray-500 mr-2"></i>
+                    New Task
+                </span>
+                <div class="flex space-x-2">
+                    <button class="text-green-600 hover:text-green-800 transition-colors duration-200">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-800 transition-colors duration-200">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            taskList.appendChild(taskDiv);
+        }
+
+        // Function to update weather information
+        async function updateWeather() {
+            try {
+                const response = await fetch('/api/weather');
+                const data = await response.json();
+                document.getElementById('temperature').textContent = data.temperature;
+                document.getElementById('humidity').textContent = data.humidity;
+                document.getElementById('rainfall').textContent = data.rainfall;
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        }
+
+        // Function to update soil information
+        async function updateSoilInfo() {
+            try {
+                const response = await fetch('/api/soil');
+                const data = await response.json();
+                document.getElementById('soil-moisture').textContent = data.moisture;
+                document.getElementById('soil-ph').textContent = data.ph;
+                document.getElementById('soil-temp').textContent = data.temperature;
+            } catch (error) {
+                console.error('Error fetching soil data:', error);
+            }
+        }
+
+        // Initialize dashboard with improved styling
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update weather and soil info every 5 minutes
+            updateWeather();
+            updateSoilInfo();
+            setInterval(updateWeather, 300000);
+            setInterval(updateSoilInfo, 300000);
+
+            // Add sample tasks with improved styling
+            const tasks = [
+                { title: 'Water crops at 6 AM', icon: 'fa-tint', color: 'text-blue-500' },
+                { title: 'Check soil moisture', icon: 'fa-thermometer-half', color: 'text-green-500' },
+                { title: 'Apply fertilizer to section B', icon: 'fa-flask', color: 'text-purple-500' }
+            ];
+            const taskList = document.getElementById('task-list');
+            tasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200';
+                taskDiv.innerHTML = `
+                    <span class="flex items-center">
+                        <i class="fas ${task.icon} ${task.color} mr-2"></i>
+                        ${task.title}
+                    </span>
+                    <div class="flex space-x-2">
+                        <button class="text-green-600 hover:text-green-800 transition-colors duration-200">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800 transition-colors duration-200">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                taskList.appendChild(taskDiv);
+            });
+
+            // Add sample equipment status with improved styling
+            const equipment = [
+                { name: 'Tractor', status: 'Operational', lastMaintenance: '2024-02-15', icon: 'fa-truck' },
+                { name: 'Irrigation System', status: 'Needs Maintenance', lastMaintenance: '2024-01-20', icon: 'fa-water' },
+                { name: 'Harvester', status: 'Operational', lastMaintenance: '2024-02-01', icon: 'fa-tractor' }
+            ];
+            const equipmentList = document.getElementById('equipment-list');
+            equipment.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas ${item.icon} text-gray-500 mr-3"></i>
+                        <div>
+                            <span class="font-semibold">${item.name}</span>
+                            <p class="text-sm text-gray-500">Last maintained: ${item.lastMaintenance}</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium ${item.status === 'Operational' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                        ${item.status}
+                    </span>
+                `;
+                equipmentList.appendChild(div);
+            });
+
+            // Add sample market prices with improved styling
+            const prices = [
+                { crop: 'Tomatoes', price: '$2.50/kg', trend: 'up', icon: 'fa-arrow-up', color: 'text-green-500' },
+                { crop: 'Potatoes', price: '$1.75/kg', trend: 'stable', icon: 'fa-equals', color: 'text-gray-500' },
+                { crop: 'Bell Peppers', price: '$3.00/kg', trend: 'down', icon: 'fa-arrow-down', color: 'text-red-500' }
+            ];
+            const pricesList = document.getElementById('market-prices');
+            prices.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200';
+                div.innerHTML = `
+                    <span class="flex items-center">
+                        <i class="fas fa-seedling text-green-500 mr-2"></i>
+                        ${item.crop}
+                    </span>
+                    <div class="flex items-center">
+                        <span class="font-semibold mr-2">${item.price}</span>
+                        <i class="fas ${item.icon} ${item.color}"></i>
+                    </div>
+                `;
+                pricesList.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html> 
