@@ -63,12 +63,6 @@ I have enhanced the original project by adding:
    pip install python-dotenv
    pip install pyjwt
    
-
-
-
-
-
-
    ```
 3. Set up environment variables in `.env` file:
    ```
