@@ -54,6 +54,21 @@ I have enhanced the original project by adding:
 2. Install required packages:
    ```
    pip install flask pymongo python-dotenv pyjwt
+   pip install Flask
+   pip install torch
+   pip install Pillow
+   pip install torchvision
+   pip install werkzeug
+   pip install pymongo
+   pip install python-dotenv
+   pip install pyjwt
+   
+
+
+
+
+
+
    ```
 3. Set up environment variables in `.env` file:
    ```
